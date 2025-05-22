@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# frozen_string_literal: true
+
+# This Git pre-push hook bumps the minor version of the gem before the push
+# proceeds.  It uses the Rake task defined in the repository (see Rakefile).
+# In short, the flow is:
+#   1. Run `rake version:bump_minor` to update lib/agentic/version.rb
+#   2. Add the updated file to the index
+#   3. Amend the most recent commit so the new version is included
+#   4. Re-run the original push with --no-verify so the hook does not loop
+
+# If any step fails, the hook aborts with a non-zero exit code, preventing the
+# push so the developer can investigate.
+
+set -euo pipefail
+
+# Record the original arguments provided by Git so we can re-run the push later.
+ORIGINAL_ARGS=("$@")
+
+# 1. Bump the minor version via Rake.
+rake version:bump_minor
+
+# 2. Stage the updated version file.
+git add lib/agentic/version.rb
+
+# 3. Amend the most recent commit to include the bumped version.  Using
+# `--no-edit` preserves the existing commit message.
+git commit --amend --no-edit
+
+# 4. Push again without running hooks to avoid an infinite loop.
+git push --no-verify "${ORIGINAL_ARGS[@]}"
+
+# 5. Finally, return a non-zero status so the original push is aborted.  Git
+# now considers the push successful because we invoked it manually above.
+exit 1
