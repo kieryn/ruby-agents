@@ -35,6 +35,25 @@ More elaborate examples can be found in the `examples/` directory.
 ```
 $ bundle install
 $ bundle exec rake spec
+
+### Automatic version bump on push
+
+This repository ships with a Git *pre-push* hook that automatically bumps the
+gem’s **minor** version (following semantic versioning) whenever you push.  The
+hook lives in `.githooks/pre-push`.  To enable it run once:
+
+```
+$ git config core.hooksPath .githooks
+```
+
+From that point on every `git push` will:
+
+1. Invoke `rake version:bump_minor` to rewrite `lib/agentic/version.rb`.
+2. Amend your last commit so the new version is included.
+3. Re-execute the push (skipping hooks) so the updated commit is sent to the
+   remote.
+
+If any step fails the push is aborted so you can address the issue.
 ```
 
 ## Contributing
