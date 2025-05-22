@@ -1,0 +1,28 @@
+# Ignore bundler config
+/.bundle
+
+# Ignore installed gems
+/vendor/bundle
+
+# Ignore log and temp files.
+*.log
+tmp/
+
+# Ignore coverage reports
+/coverage/
+
+# Ignore packaging artifacts
+*.gem
+.yardoc/
+.byebug_history
+
+# Ignore editor/project files
+.DS_Store
+*.swp
+*.swo
+*.idea/
+*.vscode/
+
+# Ignore dotenv files
+.env
+.env.*
